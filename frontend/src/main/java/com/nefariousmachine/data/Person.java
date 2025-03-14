@@ -123,7 +123,7 @@ public class Person {
         for(Relationship r : relationships){
             if(r.hasPerson(person.getId())) return;
         }
-        relationships.add(new Relationship(this, person, isMarriage));
+        relationships.add(new Relationship(this.id, person.id, isMarriage));
     }
 
 }
