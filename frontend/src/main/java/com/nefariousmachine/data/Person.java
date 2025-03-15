@@ -1,7 +1,5 @@
 package com.nefariousmachine.data;
 
-import java.util.ArrayList;
-
 /**
  * Data class to represent a member of the family tree.
  */
@@ -10,23 +8,22 @@ public class Person {
     static int idCounter = 1;
 
     //personal data
-    private int id;
+    private final int id;
     private String name;
     private String title;
     private String region;
     private String house;
-    private int birthYear;
-    private int deathYear;
+    private String birthYear;
+    private String deathYear;
     private boolean isMonarch;
     private boolean isSaint;
 
     //relational data
     private Relationship parents;
-    private ArrayList<Relationship> relationships;
 
     //constructor. Sets all data except
     public Person(String name, String title, String region,
-                  String house, int birthYear, int deathYear,
+                  String house, String birthYear, String deathYear,
                   boolean isMonarch, boolean isSaint, Relationship parents){
         this.id = idCounter;
         idCounter++;
@@ -69,16 +66,16 @@ public class Person {
     public String getHouse() {
         return house;
     }
-    public void setBirthYear(int birthYear) {
+    public void setBirthYear(String birthYear) {
         this.birthYear = birthYear;
     }
-    public int getBirthYear() {
+    public String getBirthYear() {
         return birthYear;
     }
-    public void setDeathYear(int deathYear) {
+    public void setDeathYear(String deathYear) {
         this.deathYear = deathYear;
     }
-    public int getDeathYear() {
+    public String getDeathYear() {
         return deathYear;
     }
     public void setMonarch(boolean monarch) {
@@ -94,36 +91,32 @@ public class Person {
         return parents;
     }
 
-    //crud operations for relationships
-    public ArrayList<Relationship> getRelationships() {
-        return relationships;
-    }
-
-    /**
-     * Removes the relationship this person has with a person who has a particular id.
-     * @param id id of the person whose relationship with this person is being removed.
-     *           If this id equals the id of this person, then nothing happens.
-     *           If this person does not have a relationship with a person of this id, nothing happens.
-     */
-    public void removeRelationship(int id) {
-        if(id == this.id){
-            return;
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        if(title != null && !title.isEmpty()) {
+            str.append(title);
+            str.append(" ");
         }
-        for(Relationship r : relationships){
-            if(r.hasPerson(id)) relationships.remove(r);
+        str.append(name);
+        if(region != null && !region.isEmpty()) {
+            str.append(" of ");
+            str.append(region);
         }
-    }
-
-    /**
-     * Adds a relationship between this person and the person in the parameters.
-     * @param person person to add the relationship to. If these people already have a relationship then nothing happens.
-     * @param isMarriage true if this relationship is a marriage.
-     */
-    public void addRelationship(Person person, boolean isMarriage){
-        for(Relationship r : relationships){
-            if(r.hasPerson(person.getId())) return;
+        if(house != null && !house.isEmpty()) {
+            str.append("\nHouse of ");
+            str.append(house);
         }
-        relationships.add(new Relationship(this.id, person.id, isMarriage));
+        if(birthYear != null && !birthYear.isEmpty()) {
+            str.append("\n");
+            str.append(birthYear);
+            str.append(" - ");
+            if(!deathYear.split(" ")[0].isEmpty()) {
+                str.append(deathYear);
+            } else {
+                str.append("Present");
+            }
+        }
+        return str.toString();
     }
-
 }
