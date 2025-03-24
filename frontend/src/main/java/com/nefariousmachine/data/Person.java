@@ -21,7 +21,7 @@ public class Person {
     //relational data
     private Relationship parents;
 
-    //constructor. Sets all data except
+    //constructor. Sets all data except id
     public Person(String name, String title, String region,
                   String house, String birthYear, String deathYear,
                   boolean isMonarch, boolean isSaint, Relationship parents){
@@ -36,6 +36,19 @@ public class Person {
         this.isMonarch = isMonarch;
         this.isSaint = isSaint;
         this.parents = parents;
+    }
+
+    public Person(int id) {
+        this.id = id;
+        this.name = "";
+        this.title = "";
+        this.region = "";
+        this.house = "";
+        this.birthYear = "";
+        this.deathYear = "";
+        this.isMonarch = false;
+        this.isSaint = false;
+        this.parents = null;
     }
 
     //getters and setters
@@ -78,8 +91,14 @@ public class Person {
     public String getDeathYear() {
         return deathYear;
     }
+    public boolean getIsMonarch() {
+        return isMonarch;
+    }
     public void setMonarch(boolean monarch) {
         isMonarch = monarch;
+    }
+    public boolean getIsSaint() {
+        return isSaint;
     }
     public void setSaint(boolean saint) {
         isSaint = saint;
@@ -107,7 +126,7 @@ public class Person {
             str.append("\nHouse of ");
             str.append(house);
         }
-        if(birthYear != null && !birthYear.isEmpty()) {
+        if(birthYear != null && !birthYear.split(" ")[0].isEmpty()) {
             str.append("\n");
             str.append(birthYear);
             str.append(" - ");

@@ -33,6 +33,10 @@ public class TreeImageGenerator {
         return familyTreeImage;
     }
 
+    public static FamilyTree getFamilyTree() {
+        return familyTree;
+    }
+
     public static void setFamilyTree(FamilyTree ft) {
         familyTree = ft;
     }
@@ -43,6 +47,9 @@ public class TreeImageGenerator {
     public static void generate() {
         //Assigns each person a generation such that any Person has a higher generation number than their children.
         //Assigns generations in O(n^2) time.
+        if(familyTree == null) {
+            return;
+        }
         HashMap<Person, Integer> generations = new HashMap<>();
         for(Person member : familyTree.getMembers()) {
             if(!generations.containsKey(member)) {
@@ -237,5 +244,19 @@ public class TreeImageGenerator {
             System.out.println("Selected ID " + selectedPersonId);
             selected.add(selectedPersonId);
         }
+    }
+
+    /**
+     * @return array of the ids of the selected persons
+     */
+    public static Person[] getSelected() {
+        int[] s = new int[selected.size()];
+        if(selected.isEmpty()) {
+            return new Person[0];
+        }
+        for(int i = 0; i < selected.size(); i++) {
+            s[i] = selected.get(i);
+        }
+        return familyTree.getPersons(s);
     }
 }
