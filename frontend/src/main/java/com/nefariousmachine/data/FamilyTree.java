@@ -7,10 +7,13 @@ import java.util.*;
  * Class to represent the entire tree.
  */
 public class FamilyTree {
+
+    private final Person fakeman = new Person(-1);
+
     /**
-     * All the members of the tree. Sorted by ascending id.
+     * All the members of the tree. index corresponds to id.
      */
-    private ArrayList<Person> members = new ArrayList<>();
+    private ArrayList<Person> members = new ArrayList<>(20);
 
     /**
      * All the relationships (e.g. marriages, affairs, etc.) in the tree. Relationships are assumed to be made such that
@@ -25,29 +28,16 @@ public class FamilyTree {
     private HashMap<String, Color> houseColors = new HashMap<>();
 
     /**
-     * Adds a member to the ArrayList members in O(log(n)) time. If a person with member's id already exists, that
+     * Adds a member to the ArrayList members. If a person with member's id already exists, that
      * person in members is replaced with the new member.
      *
      * @param member Person to be added.
      */
     public void addMember(Person member){
-        //Binary insert
-        int upBound = members.size();
-        int lowBound = 0;
-        while(upBound != lowBound) {
-            int middle = lowBound + (upBound - lowBound) / 2;
-            if(members.get(middle).getId() == member.getId()) {
-                //Person already exists
-                members.set(middle, member);
-                return;
-            }
-            if(members.get(middle).getId() < member.getId()) {
-                lowBound = middle + 1;
-            } else {
-                upBound = middle;
-            }
+        while(members.size() < (int)(member.getId() * 1.5)) {
+            members.add(fakeman);
         }
-        members.add(upBound, member);
+        members.add(member.getId(), member);
     }
 
     /**
@@ -60,33 +50,24 @@ public class FamilyTree {
 
     /**
      * Gets a member of the family tree corresponding to the provided id. Returns null if there is no such member.
-     * Completes the search in O(log(n)) time.
      *
      * @param id id of the person to be returned
      * @return the person with an id matching the provided one, or null if no such person exists
      */
-    public Person getMemberById(int id){
-        return getMemberById(id, 0);
+    public Person getMemberById(int id) {
+        if(members.size() <= id) {
+            return null;
+        }
+        return members.get(id);
     }
 
-    // Same as getMemberById(int id) except it ignores elements in members prior to index i. i is an Integer, so it
-    // keeps the modifications made to it if it was passed in as an object, allowing one to see the index of members
-    // where the member was found.
-    private Person getMemberById(int id, Integer lowBound) {
-        //Binary search
-        int upBound = members.size();
-        while(upBound != lowBound) {
-            int middle = lowBound + (upBound - lowBound) / 2;
-            if(members.get(middle).getId() == id) {
-                return members.get(middle);
-            }
-            if(members.get(middle).getId() < id) {
-                lowBound = middle + 1;
-            } else {
-                upBound = middle;
-            }
-        }
-        return null;
+    /**
+     * Removes Person p from the Family Tree, assuming it is in the tree.
+     *
+     * @param p Person to be removed
+     */
+    public void removeMember(Person p) {
+        members.remove(p);
     }
 
     /**
@@ -119,14 +100,66 @@ public class FamilyTree {
                 } else {
                     upBound = middle;
                 }
-            }
-            if(relationships.get(middle).getPeople()[0] < p1.getId()) {
+            } else if(relationships.get(middle).getPeople()[0] < p1.getId()) {
                 lowBound = middle + 1;
             } else {
                 upBound = middle;
             }
         }
         relationships.add(upBound, relationship);
+    }
+
+    /**
+     * Finds the Relationship between the two members of the FamilyTree whose ids match p1 and p2, if one exists.
+     * @param p1 one of the members of the Relationship to find
+     * @param p2 one of the members of the Relationship to find
+     * @return the Relationship containing the Persons with ids p1 and p2. Returns null if no such Relationship exists.
+     */
+    public Relationship getRelationship(int p1, int p2) {
+        //Ensure p1 != p2
+        if(p1 == p2) {
+            return null;
+        }
+        //Ensure p1 < p2
+        if(p1 > p2) {
+            int temp = p1;
+            p1 = p2;
+            p2 = temp;
+        }
+        //Ensure p1 and p2 exist
+        if(getMemberById(p1) == null || getMemberById(p2) == null) {
+            return null;
+        }
+        //Binary Search
+        int upBound = relationships.size();
+        int lowBound = 0;
+        while(upBound != lowBound) {
+            int middle = lowBound + (upBound - lowBound) / 2;
+            if(relationships.get(middle).getPeople()[0] == p1) {
+                if(relationships.get(middle).getPeople()[1] == p2) {
+                    return relationships.get(middle);
+                }
+                if(relationships.get(middle).getPeople()[1] < p2) {
+                    lowBound = middle + 1;
+                } else {
+                    upBound = middle;
+                }
+            } else if(relationships.get(middle).getPeople()[0] < p1) {
+                lowBound = middle + 1;
+            } else {
+                upBound = middle;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Removes a relationship from the relationships ArrayList. Does nothing if r is not hin relationships.
+     *
+     * @param r Relationship to remove.
+     */
+    public void removeRelationship(Relationship r) {
+        relationships.remove(r);
     }
 
     /**
@@ -149,45 +182,17 @@ public class FamilyTree {
     }
 
     /**
-     * Gets an array of Persons. More time-efficient than repeatedly calling getMemberById(). For relatively small
-     * sizes of ids list (size M) in relation to the size of this.members (size N), runs in time O(M log(N)). For
-     * larger sizes of ids list, runs in time O(N).
+     * Gets an array of Persons.
      *
      * @param ids array of the ids of the persons to be returned
-     * @return an array of persons whose ids the ids array. The array will be sorted ascending by id, even if ids
-     * is not sorted.
+     * @return an array of persons whose ids the ids array. The order of persons in the return array will match the
+     * order in the ids array.
      */
     public Person[] getPersons(int[] ids) {
-        Arrays.sort(ids);
-        Person[] result = new Person[ids.length];
-        // check M <= N / (log2(n) - 1)
-        if(ids.length <= members.size() / ((Math.log(members.size()) / Math.log(2)) - 1)) {
-            // Faster to just call getMemberById repeatedly
-            Integer minPointer = 0;
-            for (int i = 0; i < ids.length; i++) {
-                result[i] = getMemberById(ids[i], minPointer);
-            }
-            return result;
+        Person[] persons = new Person[ids.length];
+        for(int i = 0; i < ids.length; i++){
+            persons[i] = getMemberById(ids[i]);
         }
-        // Faster to search linearly
-        int pointer = Collections.binarySearch(members, new Person(ids[0]), Comparator.comparingInt(Person::getId));
-        //get insertion point if ids[0] is not in the list
-        if(pointer < 0) {
-            pointer = -(pointer + 1);
-        }
-        int idPointer = 0;
-        while(pointer < members.size() && idPointer < ids.length) {
-            int id = ids[idPointer];
-            while(pointer < members.size() && members.get(pointer).getId() < id) {
-                pointer++;
-            }
-            if(pointer < members.size() && members.get(pointer).getId() == id) {
-                result[idPointer] = members.get(pointer);
-                pointer++;
-            }
-            idPointer++;
-        }
-
-        return result;
+        return persons;
     }
 }

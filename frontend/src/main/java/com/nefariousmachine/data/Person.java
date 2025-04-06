@@ -16,7 +16,7 @@ public class Person {
     private String birthYear;
     private String deathYear;
     private boolean isMonarch;
-    private boolean isSaint;
+    private boolean isUnknown;
 
     //relational data
     private Relationship parents;
@@ -24,7 +24,7 @@ public class Person {
     //constructor. Sets all data except id
     public Person(String name, String title, String region,
                   String house, String birthYear, String deathYear,
-                  boolean isMonarch, boolean isSaint, Relationship parents){
+                  boolean isMonarch, boolean isUnknown, Relationship parents){
         this.id = idCounter;
         idCounter++;
         this.name = name;
@@ -34,7 +34,7 @@ public class Person {
         this.birthYear = birthYear;
         this.deathYear = deathYear;
         this.isMonarch = isMonarch;
-        this.isSaint = isSaint;
+        this.isUnknown = isUnknown;
         this.parents = parents;
     }
 
@@ -47,7 +47,7 @@ public class Person {
         this.birthYear = "";
         this.deathYear = "";
         this.isMonarch = false;
-        this.isSaint = false;
+        this.isUnknown = false;
         this.parents = null;
     }
 
@@ -97,11 +97,11 @@ public class Person {
     public void setMonarch(boolean monarch) {
         isMonarch = monarch;
     }
-    public boolean getIsSaint() {
-        return isSaint;
+    public boolean getIsUnknown() {
+        return isUnknown;
     }
-    public void setSaint(boolean saint) {
-        isSaint = saint;
+    public void setUnknown(boolean unknown) {
+        isUnknown = unknown;
     }
     public void setParents(Relationship parents) {
         this.parents = parents;

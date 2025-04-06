@@ -7,10 +7,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class TreePanel extends JPanel {
+    private static final double ZOOM_COEFFICIENT = 1.1;
+
     private BufferedImage treeImage;
     private int x = 0;
     private int y = 0;
@@ -20,10 +24,17 @@ public class TreePanel extends JPanel {
         setPreferredSize(new Dimension(800,450));
         setBackground(Color.WHITE);
 
+        addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                zoom *= Math.pow(ZOOM_COEFFICIENT, e.getPreciseWheelRotation());
+                zoom = Math.max(Math.min(zoom, 0.1), 4.0);
+            }
+        });
     }
 
-    public void setTreeImage(BufferedImage treeImage) {
-        this.treeImage = treeImage;
+    public void setTreeImage() {
+        this.treeImage = TreeImageGenerator.getFamilyTreeImage();
         repaint();
     }
 
@@ -39,7 +50,7 @@ public class TreePanel extends JPanel {
         int realX = e.getX() + x;
         int realY = e.getY() + y;
         TreeImageGenerator.select(realX, realY);
-        TreeImageGenerator.generate();
+        TreeImageGenerator.draw();
         this.treeImage = TreeImageGenerator.getFamilyTreeImage();
         repaint();
     }

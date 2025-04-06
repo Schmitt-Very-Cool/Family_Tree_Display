@@ -103,7 +103,8 @@ public class TreeImageGenerator {
         }
 
         //Generate graph as a 2d array.
-        //This is bad design but right now it's a proof of concept so I can test functionality elsewhere.
+        //Records how many members have already been drawn on each y level to figure out where to draw it on the x axis
+        //Will need to be replaced with good logic eventually to minimize distance between family members.
         int[] positions = new int[height];
         graph = new int[width][height];
         for(int x = 0; x < width; x++){
@@ -112,7 +113,9 @@ public class TreeImageGenerator {
             }
         }
         for(Map.Entry<Person, Integer> entry : generations.entrySet()) {
-            graph[positions[entry.getValue()]][entry.getValue()] = entry.getKey().getId();
+            int yPos = height - entry.getValue() - 1; //Reverse height order cause the tree is organized with the oldest
+                                                      //at the top.
+            graph[positions[entry.getValue()]][yPos] = entry.getKey().getId();
             positions[entry.getValue()]++;
         }
 
@@ -125,8 +128,18 @@ public class TreeImageGenerator {
             }
             System.out.println();
         }
+    }
 
-        //Draw Graph
+    /**
+     * Draws the family tree to familytreeimage based on the current state of the graph. generate() must have been
+     * called at least once so that graph is not null.
+     */
+    public static void draw() {
+        if(graph == null) {
+            return;
+        }
+        int width = graph.length;
+        int height = width == 0 ? 0 : graph[0].length;
         int image_width = BOX_WIDTH * width + PADDING * (width + 1);
         int image_height = BOX_HEIGHT * height + PADDING * (height + 1);
         familyTreeImage = new BufferedImage(image_width, image_height, BufferedImage.TYPE_INT_ARGB);
@@ -162,7 +175,7 @@ public class TreeImageGenerator {
      * @param y y-coordinate of the top-left of the box.
      * @param str string to be drawn.
      */
-    private static void writeBoxInfo(Graphics2D g2d, int x, int y, String str){
+    private static void writeBoxInfo(Graphics2D g2d, int x, int y, String str) {
         Font font = new Font(baseFont.getName(), baseFont.getStyle(), baseFont.getSize());
         g2d.setFont(font);
 
@@ -224,7 +237,6 @@ public class TreeImageGenerator {
         if (familyTreeImage == null || x < 0 || y < 0 ||
                 x >= familyTreeImage.getWidth() || y >= familyTreeImage.getHeight() ||
                 x % (BOX_WIDTH + PADDING) < PADDING || y % (BOX_HEIGHT + PADDING) < PADDING) {
-            System.out.println("Case 1");
             selected.clear();
             return;
         }
@@ -233,12 +245,10 @@ public class TreeImageGenerator {
 
         int selectedPersonId = graph[arrayX][arrayY];
         if(selectedPersonId == -1) {
-            System.out.println("Case 2");
             selected.clear();
             return;
         }
         if(selected.contains(selectedPersonId)) {
-            System.out.println("Case 3");
             selected.remove(Integer.valueOf(selectedPersonId));
         } else {
             System.out.println("Selected ID " + selectedPersonId);
@@ -258,5 +268,16 @@ public class TreeImageGenerator {
             s[i] = selected.get(i);
         }
         return familyTree.getPersons(s);
+    }
+
+    /**
+     * @return an array of ints representing the ids of the persons selected at this moment
+     */
+    public static int[] getSelectedIds() {
+        int[] s = new int[selected.size()];
+        for(int i = 0; i < selected.size(); i++) {
+            s[i] = selected.get(i);
+        }
+        return s;
     }
 }
