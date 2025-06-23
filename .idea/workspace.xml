@@ -4,13 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="352fe115-5d5a-44e6-9190-1d7939637367" name="Changes" comment="Finished Add Person and Edit Person GUI and backend functionality. Laid groundwork for adding Parentage to the tree from the GUI. Added a time-efficient getPersons method in FamilyTree for getting several Person instances from the tree at once.">
+    <list default="true" id="352fe115-5d5a-44e6-9190-1d7939637367" name="Changes" comment="Big update. Implemented a robust layout algorithm. Refactored isSaint to isUnknown. Modified members field of FamilyTree so each Person's index in members corresponds to their id. Finished implementing all CRUD operations from Edit menu. Refactored several pointer data structures including Relationship class to use the actual data objects. Added save and load functionality to expedite testing.">
+      <change afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/data/FamilyTreeDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/data/FamilyTreeFileManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/generate/ColorManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/generate/RelationshipUnit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/data/FamilyTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/data/FamilyTree.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/data/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/data/Person.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/data/Relationship.java" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/data/Relationship.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/generate/TreeImageGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/generate/TreeImageGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/local/LocalDisplay.java" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/local/LocalDisplay.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/local/TreePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/local/TreePanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/main/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main/java/com/nefariousmachine/main/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,14 +44,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "kotlin-language-version-configured": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\squee\Desktop\Programs\FamilyTree\frontend" />
@@ -110,7 +118,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742844031170</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Big update. Refactored isSaint to isUnknown. Modified members field of FamilyTree so each Person's index in members corresponds to their id. Finished implementing all CRUD operations from Edit menu.">
+      <option name="closed" value="true" />
+      <created>1743982748752</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1743982748752</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -118,6 +134,18 @@
     <MESSAGE value="Lots of setup. Packages main, local, and generate created but not much added yet. Modified Relationship class to keep person ids instead of full Persons. Created FamilyTree class to facilitate operations done on the Family Tree as a whole, still plenty to do." />
     <MESSAGE value="Big commit. Removed Relationships from Person because it was unnecessarily redundant. Added lots of GUI elements to be able to test backend functionality. Very start of CRUD operations from GUI and tree creation. Plenty more to do." />
     <MESSAGE value="Finished Add Person and Edit Person GUI and backend functionality. Laid groundwork for adding Parentage to the tree from the GUI. Added a time-efficient getPersons method in FamilyTree for getting several Person instances from the tree at once." />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished Add Person and Edit Person GUI and backend functionality. Laid groundwork for adding Parentage to the tree from the GUI. Added a time-efficient getPersons method in FamilyTree for getting several Person instances from the tree at once." />
+    <MESSAGE value="Big update. Refactored isSaint to isUnknown. Modified members field of FamilyTree so each Person's index in members corresponds to their id. Finished implementing all CRUD operations from Edit menu." />
+    <MESSAGE value="Big update. Implemented a robust layout algorithm. Refactored isSaint to isUnknown. Modified members field of FamilyTree so each Person's index in members corresponds to their id. Finished implementing all CRUD operations from Edit menu. Refactored several pointer data structures including Relationship class to use the actual data objects. Added save and load functionality to expedite testing." />
+    <option name="LAST_COMMIT_MESSAGE" value="Big update. Implemented a robust layout algorithm. Refactored isSaint to isUnknown. Modified members field of FamilyTree so each Person's index in members corresponds to their id. Finished implementing all CRUD operations from Edit menu. Refactored several pointer data structures including Relationship class to use the actual data objects. Added save and load functionality to expedite testing." />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="order" language="JAVA" />
+        <watch expression="units.get(0)" />
+        <watch expression="order" language="JAVA" />
+        <watch expression="p" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

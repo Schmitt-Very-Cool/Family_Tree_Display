@@ -7,11 +7,11 @@ public class Relationship {
     /**
      * Smaller id of the 2 people in the relationship
      */
-    private int person1;
+    private final Person person1;
     /**
-     * Larger id of the 2 people in the relationship
+     * Greater id of the 2 people in the relationship
      */
-    private int person2;
+    private final Person person2;
     public boolean isMarriage;
 
     /**
@@ -21,9 +21,9 @@ public class Relationship {
      * @param p2 one of the Persons in this Relationship.
      * @param isMarriage true if this relationship is a marriage.
      */
-    public Relationship(int p1, int p2, boolean isMarriage){
+    public Relationship(Person p1, Person p2, boolean isMarriage){
         //Ensure person1's id is smaller than person2's id
-        if(p1 > p2){
+        if(p1.getId() > p2.getId()){
             var temp = p1;
             p1 = p2;
             p2 = temp;
@@ -33,22 +33,18 @@ public class Relationship {
         this.isMarriage = isMarriage;
     }
 
-    public void setMarriage(boolean marriage) {
-        isMarriage = marriage;
-    }
-
     /**
      * @return array of both people in the Relationship in the form {person1, person2}
      */
-    public int[] getPeople(){
-        return new int[] {person1, person2};
+    public Person[] getPeople(){
+        return new Person[] {person1, person2};
     }
 
     /**
-     * @param id id of the person to be looked for
+     * @param person id of the person to be looked for
      * @return true if the person is in this relationship, false otherwise
      */
-    public boolean hasPerson(int id){
-        return (id == person1 || id == person2);
+    public boolean hasPerson(Person person){
+        return (person.equals(person1) || person.equals(person2));
     }
 }

@@ -1,6 +1,7 @@
 package com.nefariousmachine.local;
 
 import com.nefariousmachine.data.FamilyTree;
+import com.nefariousmachine.data.FamilyTreeFileManager;
 import com.nefariousmachine.data.Person;
 import com.nefariousmachine.data.Relationship;
 import com.nefariousmachine.generate.TreeImageGenerator;
@@ -16,128 +17,132 @@ import java.util.ArrayList;
  * the actual GUI components. Calls methods in the classes of package display to generate the tree image.
  */
 public class LocalDisplay extends JFrame {
-    private String[] CALENDAR_LIST = {"CE", "BCE"};
-
-    private boolean optionsEnabled = false;
+    private final String[] CALENDAR_LIST = {"CE", "BCE"};
+    private final TreeImageGenerator treeImageGenerator = new TreeImageGenerator();
 
     // --------------------------------------------------------------
     //                          GUI components
     // --------------------------------------------------------------
 
     // Center Panel
-    private TreePanel treePanel = new TreePanel();
+    private final TreePanel treePanel = new TreePanel();
 
     // Menu Bar
-    private JMenuBar menuBar = new JMenuBar();
-    private JMenu editMenu = new JMenu("Edit");
-    private JMenuItem addPerson = new JMenuItem("Add Person");
-    private JMenuItem editPersonButton = new JMenuItem("Edit Person");
-    private JMenuItem removePersonButton = new JMenuItem("Remove Person(s)");
-    private JMenuItem addParentsButton = new JMenuItem("Add Parents");
-    private JMenuItem setParentsButton = new JMenuItem("Set Parents");
-    private JMenuItem clearParentsButton = new JMenuItem("Clear Parents");
-    private JMenuItem addPartnerButton = new JMenuItem("Add Partner");
-    private JMenuItem addRelationshipButton = new JMenuItem("Add Relationship");
-    private JMenuItem removeRelationshipButton = new JMenuItem("Remove Relationship");
+    private final JMenuBar menuBar = new JMenuBar();
+    private final JMenu fileMenu = new JMenu("File");
+    private final JMenuItem newButton = new JMenuItem("New");
+    private final JMenuItem saveButton = new JMenuItem("Save");
+    private final JMenuItem saveAsButton = new JMenuItem("Save As");
+    private final JMenuItem loadButton = new JMenuItem("Load");
+    private final JMenu editMenu = new JMenu("Edit");
+    private final JMenuItem addPerson = new JMenuItem("Add Person");
+    private final JMenuItem editPersonButton = new JMenuItem("Edit Person");
+    private final JMenuItem removePersonButton = new JMenuItem("Remove Person(s)");
+    private final JMenuItem addParentsButton = new JMenuItem("Add Parents");
+    private final JMenuItem setParentsButton = new JMenuItem("Set Parents");
+    private final JMenuItem clearParentsButton = new JMenuItem("Clear Parents");
+    private final JMenuItem addPartnerButton = new JMenuItem("Add Partner");
+    private final JMenuItem addRelationshipButton = new JMenuItem("Add Relationship");
+    private final JMenuItem removeRelationshipButton = new JMenuItem("Remove Relationship");
 
     // Add Person Popup
-    private JFrame addPersonPopup = new JFrame("Add Person");
-    private JLabel addPersonNameLabel = new JLabel("Name");
-    private JLabel addPersonTitleLabel = new JLabel("Title");
-    private JLabel addPersonRegionLabel = new JLabel("Region");
-    private JLabel addPersonHouseLabel = new JLabel("House");
-    private JLabel addPersonBirthYearLabel = new JLabel("Birth Year");
-    private JLabel addPersonDeathYearLabel = new JLabel("Death Year");
-    private JTextField addPersonName = new JTextField(20);
-    private JTextField addPersonTitle = new JTextField(20);
-    private JTextField addPersonRegion = new JTextField(20);
-    private JTextField addPersonHouse = new JTextField(20);
-    private JTextField addPersonBirthYear = new JTextField(4);
-    private JTextField addPersonDeathYear = new JTextField(4);
-    private JComboBox<String> addPersonBirthYearCalendar = new JComboBox<>(CALENDAR_LIST);
-    private JComboBox<String> addPersonDeathYearCalendar = new JComboBox<>(CALENDAR_LIST);
-    private JCheckBox addPersonIsMonarch = new JCheckBox("Is Monarch");
-    private JCheckBox addPersonIsUnknown = new JCheckBox("Is Unknown");
-    private JButton addPersonSubmit = new JButton("Add");
+    private final JFrame addPersonPopup = new JFrame("Add Person");
+    private final JLabel addPersonNameLabel = new JLabel("Name");
+    private final JLabel addPersonTitleLabel = new JLabel("Title");
+    private final JLabel addPersonRegionLabel = new JLabel("Region");
+    private final JLabel addPersonHouseLabel = new JLabel("House");
+    private final JLabel addPersonBirthYearLabel = new JLabel("Birth Year");
+    private final JLabel addPersonDeathYearLabel = new JLabel("Death Year");
+    private final JTextField addPersonName = new JTextField(20);
+    private final JTextField addPersonTitle = new JTextField(20);
+    private final JTextField addPersonRegion = new JTextField(20);
+    private final JTextField addPersonHouse = new JTextField(20);
+    private final JTextField addPersonBirthYear = new JTextField(4);
+    private final JTextField addPersonDeathYear = new JTextField(4);
+    private final JComboBox<String> addPersonBirthYearCalendar = new JComboBox<>(CALENDAR_LIST);
+    private final JComboBox<String> addPersonDeathYearCalendar = new JComboBox<>(CALENDAR_LIST);
+    private final JCheckBox addPersonIsMonarch = new JCheckBox("Is Monarch");
+    private final JCheckBox addPersonIsUnknown = new JCheckBox("Is Unknown");
+    private final JButton addPersonSubmit = new JButton("Add");
 
     //Edit Person Popup
-    private JFrame editPersonPopup = new JFrame("Edit Person");
-    private JLabel editPersonNameLabel = new JLabel("Name");
-    private JLabel editPersonTitleLabel = new JLabel("Title");
-    private JLabel editPersonRegionLabel = new JLabel("Region");
-    private JLabel editPersonHouseLabel = new JLabel("House");
-    private JLabel editPersonBirthYearLabel = new JLabel("Birth Year");
-    private JLabel editPersonDeathYearLabel = new JLabel("Death Year");
-    private JTextField editPersonName = new JTextField(20);
-    private JTextField editPersonTitle = new JTextField(20);
-    private JTextField editPersonRegion = new JTextField(20);
-    private JTextField editPersonHouse = new JTextField(20);
-    private JTextField editPersonBirthYear = new JTextField(4);
-    private JTextField editPersonDeathYear = new JTextField(4);
-    private JComboBox<String> editPersonBirthYearCalendar = new JComboBox<>(CALENDAR_LIST);
-    private JComboBox<String> editPersonDeathYearCalendar = new JComboBox<>(CALENDAR_LIST);
-    private JCheckBox editPersonIsMonarch = new JCheckBox("Is Monarch");
-    private JCheckBox editPersonIsUnknown = new JCheckBox("Is Unknown");
-    private JButton editPersonSubmit = new JButton("Confirm Edits");
+    private final JFrame editPersonPopup = new JFrame("Edit Person");
+    private final JLabel editPersonNameLabel = new JLabel("Name");
+    private final JLabel editPersonTitleLabel = new JLabel("Title");
+    private final JLabel editPersonRegionLabel = new JLabel("Region");
+    private final JLabel editPersonHouseLabel = new JLabel("House");
+    private final JLabel editPersonBirthYearLabel = new JLabel("Birth Year");
+    private final JLabel editPersonDeathYearLabel = new JLabel("Death Year");
+    private final JTextField editPersonName = new JTextField(20);
+    private final JTextField editPersonTitle = new JTextField(20);
+    private final JTextField editPersonRegion = new JTextField(20);
+    private final JTextField editPersonHouse = new JTextField(20);
+    private final JTextField editPersonBirthYear = new JTextField(4);
+    private final JTextField editPersonDeathYear = new JTextField(4);
+    private final JComboBox<String> editPersonBirthYearCalendar = new JComboBox<>(CALENDAR_LIST);
+    private final JComboBox<String> editPersonDeathYearCalendar = new JComboBox<>(CALENDAR_LIST);
+    private final JCheckBox editPersonIsMonarch = new JCheckBox("Is Monarch");
+    private final JCheckBox editPersonIsUnknown = new JCheckBox("Is Unknown");
+    private final JButton editPersonSubmit = new JButton("Confirm Edits");
     private int editPersonId = -1;
 
     //Add Parents Popup
-    private JFrame addParentsPopup = new JFrame("Add Parents");
-    private JPanel addParentsParentOnePanel = new JPanel();
-    private JPanel addParentsParentTwoPanel = new JPanel();
-    private JLabel addParentsParentOneLabel = new JLabel("Parent 1");
-    private JLabel addParentsParentTwoLabel = new JLabel("Parent 2");
-    private JCheckBox addParentsParentOneUnknown = new JCheckBox("Unknown Parent");
-    private JLabel addParentsParentOneNameLabel = new JLabel("Name");
-    private JLabel addParentsParentOneTitleLabel = new JLabel("Title");
-    private JLabel addParentsParentOneRegionLabel = new JLabel("Region");
-    private JLabel addParentsParentOneHouseLabel = new JLabel("House");
-    private JLabel addParentsParentOneBirthYearLabel = new JLabel("Birth Year");
-    private JLabel addParentsParentOneDeathYearLabel = new JLabel("Death Year");
-    private JTextField addParentsParentOneName = new JTextField(20);
-    private JTextField addParentsParentOneTitle = new JTextField(20);
-    private JTextField addParentsParentOneRegion = new JTextField(20);
-    private JTextField addParentsParentOneHouse = new JTextField(20);
-    private JTextField addParentsParentOneBirthYear = new JTextField(4);
-    private JTextField addParentsParentOneDeathYear = new JTextField(4);
-    private JComboBox<String> addParentsParentOneBirthYearCalendar = new JComboBox<>(CALENDAR_LIST);
-    private JComboBox<String> addParentsParentOneDeathYearCalendar = new JComboBox<>(CALENDAR_LIST);
-    private JCheckBox addParentsParentOneIsMonarch = new JCheckBox("Is Monarch");
-    private JCheckBox addParentsParentTwoUnknown = new JCheckBox("Unknown Parent");
-    private JLabel addParentsParentTwoNameLabel = new JLabel("Name");
-    private JLabel addParentsParentTwoTitleLabel = new JLabel("Title");
-    private JLabel addParentsParentTwoRegionLabel = new JLabel("Region");
-    private JLabel addParentsParentTwoHouseLabel = new JLabel("House");
-    private JLabel addParentsParentTwoBirthYearLabel = new JLabel("Birth Year");
-    private JLabel addParentsParentTwoDeathYearLabel = new JLabel("Death Year");
-    private JTextField addParentsParentTwoName = new JTextField(20);
-    private JTextField addParentsParentTwoTitle = new JTextField(20);
-    private JTextField addParentsParentTwoRegion = new JTextField(20);
-    private JTextField addParentsParentTwoHouse = new JTextField(20);
-    private JTextField addParentsParentTwoBirthYear = new JTextField(4);
-    private JTextField addParentsParentTwoDeathYear = new JTextField(4);
-    private JComboBox<String> addParentsParentTwoBirthYearCalendar = new JComboBox<>(CALENDAR_LIST);
-    private JComboBox<String> addParentsParentTwoDeathYearCalendar = new JComboBox<>(CALENDAR_LIST);
-    private JCheckBox addParentsParentTwoIsMonarch = new JCheckBox("Is Monarch");
-    private JCheckBox addParentsIsMarriage = new JCheckBox("Is Marriage");
-    private JButton addParentsSubmit = new JButton("Add Parents");
+    private final JFrame addParentsPopup = new JFrame("Add Parents");
+    private final JPanel addParentsParentOnePanel = new JPanel();
+    private final JPanel addParentsParentTwoPanel = new JPanel();
+    private final JLabel addParentsParentOneLabel = new JLabel("Parent 1");
+    private final JLabel addParentsParentTwoLabel = new JLabel("Parent 2");
+    private final JCheckBox addParentsParentOneUnknown = new JCheckBox("Unknown Parent");
+    private final JLabel addParentsParentOneNameLabel = new JLabel("Name");
+    private final JLabel addParentsParentOneTitleLabel = new JLabel("Title");
+    private final JLabel addParentsParentOneRegionLabel = new JLabel("Region");
+    private final JLabel addParentsParentOneHouseLabel = new JLabel("House");
+    private final JLabel addParentsParentOneBirthYearLabel = new JLabel("Birth Year");
+    private final JLabel addParentsParentOneDeathYearLabel = new JLabel("Death Year");
+    private final JTextField addParentsParentOneName = new JTextField(20);
+    private final JTextField addParentsParentOneTitle = new JTextField(20);
+    private final JTextField addParentsParentOneRegion = new JTextField(20);
+    private final JTextField addParentsParentOneHouse = new JTextField(20);
+    private final JTextField addParentsParentOneBirthYear = new JTextField(4);
+    private final JTextField addParentsParentOneDeathYear = new JTextField(4);
+    private final JComboBox<String> addParentsParentOneBirthYearCalendar = new JComboBox<>(CALENDAR_LIST);
+    private final JComboBox<String> addParentsParentOneDeathYearCalendar = new JComboBox<>(CALENDAR_LIST);
+    private final JCheckBox addParentsParentOneIsMonarch = new JCheckBox("Is Monarch");
+    private final JCheckBox addParentsParentTwoUnknown = new JCheckBox("Unknown Parent");
+    private final JLabel addParentsParentTwoNameLabel = new JLabel("Name");
+    private final JLabel addParentsParentTwoTitleLabel = new JLabel("Title");
+    private final JLabel addParentsParentTwoRegionLabel = new JLabel("Region");
+    private final JLabel addParentsParentTwoHouseLabel = new JLabel("House");
+    private final JLabel addParentsParentTwoBirthYearLabel = new JLabel("Birth Year");
+    private final JLabel addParentsParentTwoDeathYearLabel = new JLabel("Death Year");
+    private final JTextField addParentsParentTwoName = new JTextField(20);
+    private final JTextField addParentsParentTwoTitle = new JTextField(20);
+    private final JTextField addParentsParentTwoRegion = new JTextField(20);
+    private final JTextField addParentsParentTwoHouse = new JTextField(20);
+    private final JTextField addParentsParentTwoBirthYear = new JTextField(4);
+    private final JTextField addParentsParentTwoDeathYear = new JTextField(4);
+    private final JComboBox<String> addParentsParentTwoBirthYearCalendar = new JComboBox<>(CALENDAR_LIST);
+    private final JComboBox<String> addParentsParentTwoDeathYearCalendar = new JComboBox<>(CALENDAR_LIST);
+    private final JCheckBox addParentsParentTwoIsMonarch = new JCheckBox("Is Monarch");
+    private final JCheckBox addParentsIsMarriage = new JCheckBox("Is Marriage");
+    private final JButton addParentsSubmit = new JButton("Add Parents");
     private int[] addParentIds;
 
     //Set Parents Popup
-    private JFrame setParentsPopup = new JFrame("Set Parents");
-    private JLabel setParentsParentOneLabel = new JLabel("Parent One");
-    private JComboBox<String> setParentsParentOneSelect = new JComboBox();
-    private JLabel setParentsParentTwoLabel = new JLabel("Parent Two");
-    private JComboBox<String> setParentsParentTwoSelect = new JComboBox();
-    private JButton setParentsSubmit = new JButton("Set Parents");
+    private final JFrame setParentsPopup = new JFrame("Set Parents");
+    private final JLabel setParentsParentOneLabel = new JLabel("Parent One");
+    private final JComboBox<String> setParentsParentOneSelect = new JComboBox<>();
+    private final JLabel setParentsParentTwoLabel = new JLabel("Parent Two");
+    private final JComboBox<String> setParentsParentTwoSelect = new JComboBox<>();
+    private final JButton setParentsSubmit = new JButton("Set Parents");
     private Person[] setParentsSelectedPersons;
     private ArrayList<Person> setParentsParentOneOptions;
     private ArrayList<Person> setParentsParentTwoOptions;
 
     //Add Relationship Popup
-    private JFrame addRelationshipPopup = new JFrame("Add Relationship");
-    private JCheckBox addRelationshipIsMarriage = new JCheckBox("Is Marriage");
-    private JButton addRelationshipSubmit = new JButton("Add Relationship");
+    private final JFrame addRelationshipPopup = new JFrame("Add Relationship");
+    private final JCheckBox addRelationshipIsMarriage = new JCheckBox("Is Marriage");
+    private final JButton addRelationshipSubmit = new JButton("Add Relationship");
     private Person[] chosenRelationshipPeople;
 
     // --------------------------------------------------------------
@@ -153,6 +158,11 @@ public class LocalDisplay extends JFrame {
         addEventHandlers();
         setupPopups();
 
+        fileMenu.add(newButton);
+        fileMenu.add(saveButton);
+        fileMenu.add(saveAsButton);
+        fileMenu.add(loadButton);
+        menuBar.add(fileMenu);
         editMenu.add(addPerson);
         editMenu.add(editPersonButton);
         editMenu.add(removePersonButton);
@@ -169,10 +179,13 @@ public class LocalDisplay extends JFrame {
         this.familyTree = familyTree;
         add(treePanel, "Center");
         pack();
-        setVisible(true);
     }
 
     private void addToolTips() {
+        newButton.setToolTipText("New family tree");
+        saveButton.setToolTipText("Save this family tree");
+        saveAsButton.setToolTipText("Save this family tree to a new file");
+        loadButton.setToolTipText("Load in a family tree from a file");
         addPerson.setToolTipText("Add a new Person to the Tree.");
         editPersonButton.setToolTipText("Edit details of the selected Person.");
         removePersonButton.setToolTipText("Removes selected Person or Persons from the Tree.");
@@ -188,7 +201,7 @@ public class LocalDisplay extends JFrame {
         treePanel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                treePanel.onClick(e);
+                treePanel.onClick(e, treeImageGenerator);
                 updateSelectionOptions();
             }
 
@@ -198,103 +211,23 @@ public class LocalDisplay extends JFrame {
             @Override public void mouseExited(MouseEvent e) {}
         });
 
-        addPerson.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addPersonAction();
-            }
-        });
-        addPersonSubmit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addPersonToTree();
-            }
-        });
-
-        editPersonButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editPersonAction();
-            }
-        });
-        editPersonSubmit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editPerson();
-            }
-        });
-
-        removePersonButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removePerson();
-            }
-        });
-
-        addParentsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addParentsAction();
-            }
-        });
-        addParentsSubmit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addParents();
-            }
-        });
-
-        setParentsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setParentsAction();
-            }
-        });
-        setParentsParentOneSelect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setParentsParentOneAction();
-            }
-        });
-        setParentsParentTwoSelect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setParentsParentTwoAction();
-            }
-        });
-        setParentsSubmit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setParents();
-            }
-        });
-
-        clearParentsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearParents();
-            }
-        });
-
-        addRelationshipButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addRelationshipAction();
-            }
-        });
-        addRelationshipSubmit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addRelationship();
-            }
-        });
-
-        removeRelationshipButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removeRelationship();
-            }
-        });
+        saveAsButton.addActionListener(e -> saveTree());
+        loadButton.addActionListener(e -> loadTree());
+        addPerson.addActionListener(e -> addPersonAction());
+        addPersonSubmit.addActionListener(e -> addPersonToTree());
+        editPersonButton.addActionListener(e -> editPersonAction());
+        editPersonSubmit.addActionListener(e -> editPerson());
+        removePersonButton.addActionListener(e -> removePerson());
+        addParentsButton.addActionListener(e -> addParentsAction());
+        addParentsSubmit.addActionListener(e -> addParents());
+        setParentsButton.addActionListener(e -> setParentsAction());
+        setParentsParentOneSelect.addActionListener(e -> setParentsParentOneAction());
+        setParentsParentTwoSelect.addActionListener(e -> setParentsParentTwoAction());
+        setParentsSubmit.addActionListener(e -> setParents());
+        clearParentsButton.addActionListener(e -> clearParents());
+        addRelationshipButton.addActionListener(e -> addRelationshipAction());
+        addRelationshipSubmit.addActionListener(e -> addRelationship());
+        removeRelationshipButton.addActionListener(e -> removeRelationship());
     }
 
     private void setupPopups() {
@@ -512,18 +445,19 @@ public class LocalDisplay extends JFrame {
      * Call this to update which options in the Edit menu should be enabled or disabled.
      */
     private void updateSelectionOptions() {
-        var selected = TreeImageGenerator.getSelected();
+        var selected = treeImageGenerator.getSelected();
         boolean noParents = true;
         for(Person p : selected) {
-            if(p.getParents() != null) {
+            if (p.getParents() != null) {
                 noParents = false;
+                break;
             }
         }
         boolean hasRelationship = false;
         if(selected.length > 2) {
             for(int i = 0; i < selected.length; i++) {
                 for(int j = i + 1; j < selected.length; j++) {
-                    if(TreeImageGenerator.getFamilyTree()
+                    if(treeImageGenerator.getFamilyTree()
                             .getRelationship(selected[i].getId(), selected[j].getId()) != null) {
                         hasRelationship = true;
                         break;
@@ -534,11 +468,7 @@ public class LocalDisplay extends JFrame {
                 }
             }
         }
-        if(selected.length == 1) {
-            editPersonButton.setEnabled(true);
-        } else {
-            editPersonButton.setEnabled(false);
-        }
+        editPersonButton.setEnabled(selected.length == 1);
         if(noParents) {
             addParentsButton.setEnabled(true);
             clearParentsButton.setEnabled(false);
@@ -546,22 +476,10 @@ public class LocalDisplay extends JFrame {
             addParentsButton.setEnabled(false);
             clearParentsButton.setEnabled(true);
         }
-        if(hasRelationship) {
-            setParentsButton.setEnabled(true);
-        } else {
-            setParentsButton.setEnabled(false);
-        }
-        if(selected.length == 2) {
-            addRelationshipButton.setEnabled(true);
-        } else {
-            addRelationshipButton.setEnabled(false);
-        }
-        if(selected.length == 2 && TreeImageGenerator.getFamilyTree()
-                .getRelationship(selected[0].getId(), selected[1].getId()) != null) {
-            removeRelationshipButton.setEnabled(true);
-        } else {
-            removeRelationshipButton.setEnabled(false);
-        }
+        setParentsButton.setEnabled(hasRelationship);
+        addRelationshipButton.setEnabled(selected.length == 2);
+        removeRelationshipButton.setEnabled(selected.length == 2 && treeImageGenerator.getFamilyTree()
+                .getRelationship(selected[0].getId(), selected[1].getId()) != null);
     }
 
     private void addPersonAction() {
@@ -580,10 +498,11 @@ public class LocalDisplay extends JFrame {
 
         Person newMember = new Person(name, title, region, house, birthYearString, deathYearString, isMonarch, isUnknown, null);
         familyTree.addMember(newMember);
-        TreeImageGenerator.setFamilyTree(familyTree);
-        TreeImageGenerator.generate();
-        TreeImageGenerator.draw();
-        treePanel.setTreeImage();
+        System.out.println("Added Member " + name + " (id=" + newMember.getId() + ")");
+        treeImageGenerator.setFamilyTree(familyTree);
+        treeImageGenerator.generate();
+        treeImageGenerator.draw();
+        treePanel.setTreeImage(treeImageGenerator.getFamilyTreeImage());
 
         clearAddPersonPopup();
     }
@@ -594,7 +513,7 @@ public class LocalDisplay extends JFrame {
     }
 
     private void editPerson() {
-        Person personToEdit = TreeImageGenerator.getFamilyTree().getMemberById(editPersonId);
+        Person personToEdit = treeImageGenerator.getFamilyTree().getMemberById(editPersonId);
         personToEdit.setName(editPersonName.getText());
         personToEdit.setTitle(editPersonTitle.getText());
         personToEdit.setRegion(editPersonRegion.getText());
@@ -604,25 +523,25 @@ public class LocalDisplay extends JFrame {
         personToEdit.setMonarch(editPersonIsMonarch.isSelected());
         personToEdit.setUnknown(editPersonIsUnknown.isSelected());
 
-        TreeImageGenerator.draw();
-        treePanel.setTreeImage();
+        treeImageGenerator.draw();
+        treePanel.setTreeImage(treeImageGenerator.getFamilyTreeImage());
         editPersonPopup.setVisible(false);
     }
 
     private void removePerson() {
-        for(Person p : TreeImageGenerator.getSelected()) {
-            TreeImageGenerator.getFamilyTree().removeMember(p);
+        for(Person p : treeImageGenerator.getSelected()) {
+            treeImageGenerator.getFamilyTree().removeMember(p);
         }
-        TreeImageGenerator.generate();
-        TreeImageGenerator.draw();
-        treePanel.setTreeImage();
-        TreeImageGenerator.select(-1, -1);
+        treeImageGenerator.generate();
+        treeImageGenerator.draw();
+        treePanel.setTreeImage(treeImageGenerator.getFamilyTreeImage());
+        treeImageGenerator.select(-1, -1);
         updateSelectionOptions();
     }
 
     private void addParentsAction() {
         prepAddParentsPopup();
-        addParentIds = TreeImageGenerator.getSelectedIds();
+        addParentIds = treeImageGenerator.getSelectedIds();
         addParentsPopup.setVisible(true);
     }
 
@@ -662,20 +581,20 @@ public class LocalDisplay extends JFrame {
                     false, false, null);
         }
 
-        Relationship parentage = new Relationship(parent1.getId(), parent2.getId(), addParentsIsMarriage.isSelected());
-        var selected = TreeImageGenerator.getFamilyTree().getPersons(addParentIds);
+        Relationship parentage = new Relationship(parent1, parent2, addParentsIsMarriage.isSelected());
+        var selected = treeImageGenerator.getFamilyTree().getPersons(addParentIds);
         for(Person selection : selected) {
             selection.setParents(parentage);
         }
 
-        TreeImageGenerator.getFamilyTree().addMember(parent1);
-        TreeImageGenerator.getFamilyTree().addMember(parent2);
-        TreeImageGenerator.getFamilyTree().
+        treeImageGenerator.getFamilyTree().addMember(parent1);
+        treeImageGenerator.getFamilyTree().addMember(parent2);
+        treeImageGenerator.getFamilyTree().
                 addRelationship(parentage);
 
-        TreeImageGenerator.generate();
-        TreeImageGenerator.draw();
-        treePanel.setTreeImage();
+        treeImageGenerator.generate();
+        treeImageGenerator.draw();
+        treePanel.setTreeImage(treeImageGenerator.getFamilyTreeImage());
         addParentsPopup.setVisible(false);
     }
 
@@ -697,10 +616,10 @@ public class LocalDisplay extends JFrame {
         }
         setParentsParentTwoOptions = new ArrayList<>();
         Person parentOne = setParentsParentOneOptions.get(setParentsParentOneSelect.getSelectedIndex() - 1);
-        for(int i = 0; i < setParentsParentOneOptions.size(); i++) {
-            if(TreeImageGenerator.getFamilyTree()
-                    .getRelationship(parentOne.getId(), setParentsParentOneOptions.get(i).getId()) != null) {
-                setParentsParentTwoOptions.add(setParentsParentOneOptions.get(i));
+        for (Person setParentsParentOneOption : setParentsParentOneOptions) {
+            if (treeImageGenerator.getFamilyTree()
+                    .getRelationship(parentOne.getId(), setParentsParentOneOption.getId()) != null) {
+                setParentsParentTwoOptions.add(setParentsParentOneOption);
             }
         }
         String[] parentTwoList = new String[setParentsParentTwoOptions.size() + 1];
@@ -708,7 +627,7 @@ public class LocalDisplay extends JFrame {
         for(int i = 0; i < setParentsParentTwoOptions.size(); i++) {
             parentTwoList[i + 1] = setParentsParentTwoOptions.get(i).toString();
         }
-        setParentsParentTwoSelect.setModel(new DefaultComboBoxModel<String>(parentTwoList));
+        setParentsParentTwoSelect.setModel(new DefaultComboBoxModel<>(parentTwoList));
         setParentsParentTwoSelect.setSelectedIndex(0);
         setParentsParentTwoSelect.setEnabled(true);
     }
@@ -724,7 +643,7 @@ public class LocalDisplay extends JFrame {
     private void setParents() {
         Person parentOne = setParentsParentOneOptions.get(setParentsParentOneSelect.getSelectedIndex()-1);
         Person parentTwo = setParentsParentTwoOptions.get(setParentsParentTwoSelect.getSelectedIndex()-1);
-        Relationship parentage = TreeImageGenerator.getFamilyTree().getRelationship(parentOne.getId(), parentTwo.getId());
+        Relationship parentage = treeImageGenerator.getFamilyTree().getRelationship(parentOne.getId(), parentTwo.getId());
         for(Person p : setParentsSelectedPersons) {
             if(p == parentOne || p == parentTwo) {
                 continue;
@@ -732,58 +651,59 @@ public class LocalDisplay extends JFrame {
             p.setParents(parentage);
         }
 
-        TreeImageGenerator.generate();
-        TreeImageGenerator.draw();
-        treePanel.setTreeImage();
+        treeImageGenerator.generate();
+        treeImageGenerator.draw();
+        treePanel.setTreeImage(treeImageGenerator.getFamilyTreeImage());
         updateSelectionOptions();
 
         setParentsPopup.setVisible(false);
     }
 
     private void clearParents() {
-        Person[] selected = TreeImageGenerator.getSelected();
+        Person[] selected = treeImageGenerator.getSelected();
         for(Person p : selected) {
             p.setParents(null);
         }
 
-        TreeImageGenerator.generate();
-        TreeImageGenerator.draw();
-        treePanel.setTreeImage();
+        treeImageGenerator.generate();
+        treeImageGenerator.draw();
+        treePanel.setTreeImage(treeImageGenerator.getFamilyTreeImage());
         updateSelectionOptions();
     }
 
     private void addRelationshipAction() {
-        chosenRelationshipPeople = TreeImageGenerator.getSelected();
+        chosenRelationshipPeople = treeImageGenerator.getSelected();
         addRelationshipPopup.setVisible(true);
     }
 
     private void addRelationship() {
-        Relationship relationship = new Relationship(chosenRelationshipPeople[0].getId(),
-                chosenRelationshipPeople[1].getId(), addRelationshipIsMarriage.isSelected());
-        TreeImageGenerator.getFamilyTree().addRelationship(relationship);
+        Relationship relationship = new Relationship(chosenRelationshipPeople[0],
+                chosenRelationshipPeople[1], addRelationshipIsMarriage.isSelected());
+        treeImageGenerator.getFamilyTree().addRelationship(relationship);
+        System.out.println("Added relationship " + relationship.getPeople()[0] + "+" + relationship.getPeople()[1]);
 
-        TreeImageGenerator.generate();
-        TreeImageGenerator.draw();
-        treePanel.setTreeImage();
+        treeImageGenerator.generate();
+        treeImageGenerator.draw();
+        treePanel.setTreeImage(treeImageGenerator.getFamilyTreeImage());
 
         addRelationshipPopup.setVisible(false);
         updateSelectionOptions();
     }
 
     private void removeRelationship() {
-        Person[] lovers = TreeImageGenerator.getSelected();
-        Relationship r = TreeImageGenerator.getFamilyTree().getRelationship(lovers[0].getId(), lovers[1].getId());
-        TreeImageGenerator.getFamilyTree().removeRelationship(r);
+        Person[] lovers = treeImageGenerator.getSelected();
+        Relationship r = treeImageGenerator.getFamilyTree().getRelationship(lovers[0].getId(), lovers[1].getId());
+        treeImageGenerator.getFamilyTree().removeRelationship(r);
 
-        TreeImageGenerator.generate();
-        TreeImageGenerator.draw();
-        treePanel.setTreeImage();
+        treeImageGenerator.generate();
+        treeImageGenerator.draw();
+        treePanel.setTreeImage(treeImageGenerator.getFamilyTreeImage());
 
         updateSelectionOptions();
     }
 
     private void prepEditPersonInfo() {
-        Person[] personArray = TreeImageGenerator.getSelected();
+        Person[] personArray = treeImageGenerator.getSelected();
         if(personArray.length != 1) {
             return;
         }
@@ -844,11 +764,11 @@ public class LocalDisplay extends JFrame {
     }
 
     private void prepSetParentsPopup() {
-        setParentsSelectedPersons = TreeImageGenerator.getSelected();
+        setParentsSelectedPersons = treeImageGenerator.getSelected();
         setParentsParentOneOptions = new ArrayList<>();
         for(Person p : setParentsSelectedPersons) {
             for(Person q : setParentsSelectedPersons) {
-                if(TreeImageGenerator.getFamilyTree().getRelationship(p.getId(), q.getId()) != null) {
+                if(treeImageGenerator.getFamilyTree().getRelationship(p.getId(), q.getId()) != null) {
                     setParentsParentOneOptions.add(p);
                     break;
                 }
@@ -864,11 +784,26 @@ public class LocalDisplay extends JFrame {
         by Parent One, so we just need a placeholder item for Parent Two to sit on.
          */
         String[] parentTwoFakeList = {"Select Parent Two"};
-        setParentsParentOneSelect.setModel(new DefaultComboBoxModel<String>(parentOneList));
+        setParentsParentOneSelect.setModel(new DefaultComboBoxModel<>(parentOneList));
         setParentsParentOneSelect.setSelectedIndex(0);
-        setParentsParentTwoSelect.setModel(new DefaultComboBoxModel<String>(parentTwoFakeList));
+        setParentsParentTwoSelect.setModel(new DefaultComboBoxModel<>(parentTwoFakeList));
         setParentsParentTwoSelect.setSelectedIndex(0);
         setParentsParentTwoSelect.setEnabled(false);
         setParentsSubmit.setEnabled(false);
+    }
+
+    private void saveTree() {
+        FamilyTreeFileManager.saveWithDialog(familyTree, this);
+    }
+
+    private void loadTree() {
+        FamilyTree loadedTree = FamilyTreeFileManager.loadWithDialog(this);
+        if(loadedTree != null) {
+            familyTree = loadedTree;
+            treeImageGenerator.setFamilyTree(familyTree);
+            treeImageGenerator.generate();
+            treeImageGenerator.draw();
+            treePanel.setTreeImage(treeImageGenerator.getFamilyTreeImage());
+        }
     }
 }

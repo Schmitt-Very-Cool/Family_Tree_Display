@@ -40,15 +40,6 @@ public class Person {
 
     public Person(int id) {
         this.id = id;
-        this.name = "";
-        this.title = "";
-        this.region = "";
-        this.house = "";
-        this.birthYear = "";
-        this.deathYear = "";
-        this.isMonarch = false;
-        this.isUnknown = false;
-        this.parents = null;
     }
 
     //getters and setters
